@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekly Sequence Collector</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #38bdf8;
+      --accent2: #a78bfa;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --success: #34d399;
+      --danger: #f87171;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    h1 {
+      font-size: 2rem;
+      margin: 0 0 8px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .form-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input[type="date"] {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+    }
+    input[type="date"]:focus {
+      border-color: var(--accent);
+    }
+    button {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border: none;
+      color: #0f172a;
+      font-weight: 700;
+      padding: 12px 28px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .info {
+      background: rgba(56, 189, 248, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+    .numbers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .num-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 12px 8px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--accent);
+      transition: all 0.2s;
+    }
+    .num-item:hover {
+      border-color: var(--accent);
+      transform: scale(1.05);
+    }
+    .stats {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .stat {
+      background: #0f172a;
+      padding: 12px 20px;
+      border-radius: 10px;
+    }
+    .stat .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--success);
+    }
+    .stat .label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .details-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.9rem;
+    }
+    .details-table th, .details-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+    }
+    .details-table th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .details-table tr:hover td {
+      background: rgba(255,255,255,0.03);
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
+    .error {
+      color: var(--danger);
+      background: rgba(248, 113, 113, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 32px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Weekly Sequence Collector</h1>
+      <p class="subtitle">Thu thập mẫu số theo chu kỳ tuần từ tập dữ liệu lịch sử</p>
+    </header>
+
+    <div class="card">
+      <div class="form-row">
+        <div>
+          <label for="dateInput">Chọn ngày tham chiếu</label>
+          <input type="date" id="dateInput" />
+        </div>
+        <button id="btnCalc" disabled>Thu thập</button>
+      </div>
+      <div class="info">
+        <strong>Quy tắc:</strong> Từ ngày tham chiếu, duyệt ngược lại theo bước <strong>7 ngày</strong> (cùng thứ trong tuần). 
+        Chỉ giữ lại những bản ghi có <strong>chữ số đầu tiên</strong> của mã 5 chữ số trùng với <strong>chữ số đơn vị</strong> của ngày đã chọn. 
+        Trích xuất <strong>2 chữ số cuối</strong> của mã đó và thu thập đủ <strong>31 giá trị không trùng</strong>.
+      </div>
+    </div>
+
+    <div id="resultArea"></div>
+
+    <footer>
+      Công cụ phân tích chuỗi số • Dữ liệu lịch sử công khai
+    </footer>
+  </div>
+
+  <script>
+    const DATA_URL = 'https://raw.githubusercontent.com/khiemdoan/vietnam-lottery-xsmb-analysis/refs/heads/main/data/xsmb.csv';
+    let dataMap = new Map();
+    let minDate = null;
+    let maxDate = null;
+
+    const dateInput = document.getElementById('dateInput');
+    const btnCalc = document.getElementById('btnCalc');
+    const resultArea = document.getElementById('resultArea');
+
+    const today = new Date();
+    dateInput.valueAsDate = today;
+
+    async function loadData() {
+      resultArea.innerHTML = '<div class="loading">Đang tải tập dữ liệu...</div>';
+      try {
+        const res = await fetch(DATA_URL);
+        if (!res.ok) throw new Error('Không tải được dữ liệu');
+        const text = await res.text();
+        const lines = text.trim().split('\n');
+        for (let i = 1; i < lines.length; i++) {
+          const parts = lines[i].split(',');
+          if (parts.length < 2) continue;
+          const dateStr = parts[0].trim();
+          const value = parseInt(parts[1], 10);
+          if (!isNaN(value) && dateStr) {
+            dataMap.set(dateStr, value);
+            if (!minDate || dateStr < minDate) minDate = dateStr;
+            if (!maxDate || dateStr > maxDate) maxDate = dateStr;
+          }
+        }
+        btnCalc.disabled = false;
+        resultArea.innerHTML = `<div class="info">Đã tải ${dataMap.size} bản ghi (từ ${minDate} đến ${maxDate}). Chọn ngày và nhấn Thu thập.</div>`;
+      } catch (e) {
+        resultArea.innerHTML = `<div class="error">Lỗi tải dữ liệu: ${e.message}. Vui lòng thử lại.</div>`;
+      }
+    }
+
+    function pad5(n) {
+      return String(n).padStart(5, '0');
+    }
+
+    function formatDate(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function getWeekdayName(d) {
+      const names = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+      return names[d.getDay()];
+    }
+
+    btnCalc.addEventListener('click', () => {
+      const selected = dateInput.valueAsDate;
+      if (!selected) return;
+
+      const dayOfMonth = selected.getDate();
+      const unitsDigit = dayOfMonth % 10;
+      const weekday = getWeekdayName(selected);
+
+      const collected = [];
+      const seen = new Set();
+      let current = new Date(selected);
+      current.setHours(12, 0, 0, 0);
+
+      let steps = 0;
+      const maxSteps = 2000;
+
+      while (collected.length < 31 && steps < maxSteps) {
+        const dateStr = formatDate(current);
+        if (dataMap.has(dateStr)) {
+          const value = dataMap.get(dateStr);
+          const s = pad5(value);
+          const firstDigit = parseInt(s[0], 10);
+          if (firstDigit === unitsDigit) {
+            const last2 = s.slice(-2);
+            if (!seen.has(last2)) {
+              seen.add(last2);
+              collected.push({
+                date: dateStr,
+                code: s,
+                last2: last2
+              });
+            }
+          }
+        }
+        current.setDate(current.getDate() - 7);
+        steps++;
+        if (dateStr < minDate) break;
+      }
+
+      renderResult(collected, unitsDigit, weekday, dayOfMonth, selected);
+    });
+
+    function renderResult(items, unitsDigit, weekday, dayOfMonth, selectedDate) {
+      if (items.length === 0) {
+        resultArea.innerHTML = `<div class="card"><div class="error">Không tìm thấy giá trị nào phù hợp với chữ số đơn vị <strong>${unitsDigit}</strong> (${weekday} ngày ${dayOfMonth}).</div></div>`;
+        return;
+      }
+
+      const numsHtml = items.map(it => `<div class="num-item" title="${it.date} - ${it.code}">${it.last2}</div>`).join('');
+
+      const rows = items.map((it, idx) => `
+        <tr>
+          <td>${idx + 1}</td>
+          <td>${it.date}</td>
+          <td>${it.code}</td>
+          <td><strong>${it.last2}</strong></td>
+        </tr>
+      `).join('');
+
+      resultArea.innerHTML = `
+        <div class="card">
+          <div class="stats">
+            <div class="stat">
+              <div class="value">${items.length}</div>
+              <div class="label">Giá trị đã thu thập</div>
+            </div>
+            <div class="stat">
+              <div class="value">${unitsDigit}</div>
+              <div class="label">Chữ số đơn vị</div>
+            </div>
+            <div class="stat">
+              <div class="value">${weekday}</div>
+              <div class="label">Thứ</div>
+            </div>
+          </div>
+          <p style="color:var(--muted); margin:0 0 8px;">
+            Ngày tham chiếu: <strong>${formatDate(selectedDate)}</strong> 
+            ${items.length < 31 ? `<span class="badge" style="background:#f87171;color:#fff;">Chưa đủ 31</span>` : `<span class="badge">Đủ 31 giá trị</span>`}
+          </p>
+          <div class="numbers-grid">${numsHtml}</div>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0;">Chi tiết các bản ghi được chọn</h3>
+          <table class="details-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Ngày</th>
+                <th>Mã 5 chữ số</th>
+                <th>2 chữ số cuối</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
