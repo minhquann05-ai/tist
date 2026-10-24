@@ -314,6 +314,9 @@
         if (dateStr < minDate) break;
       }
 
+      // Sắp xếp tăng dần theo 2 chữ số cuối
+      collected.sort((a, b) => a.last2.localeCompare(b.last2));
+
       renderResult(collected, unitsDigit, weekday, dayOfMonth, selected);
     });
 
