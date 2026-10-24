@@ -210,7 +210,7 @@
       <div class="info">
         <strong>Quy tắc:</strong> Từ ngày tham chiếu, duyệt ngược lại theo bước <strong>7 ngày</strong> (cùng thứ trong tuần). 
         Chỉ giữ lại những bản ghi có <strong>chữ số đầu tiên</strong> của mã 5 chữ số trùng với <strong>chữ số đơn vị</strong> của ngày đã chọn. 
-        Trích xuất <strong>2 chữ số cuối</strong> của mã đó và thu thập đủ <strong>31 giá trị không trùng</strong>.
+        Trích xuất <strong>2 chữ số cuối</strong> của mã đó và thu thập đủ <strong>69 giá trị không trùng</strong>.
       </div>
     </div>
 
@@ -291,7 +291,7 @@
       let steps = 0;
       const maxSteps = 2000;
 
-      while (collected.length < 31 && steps < maxSteps) {
+      while (collected.length < 69 && steps < maxSteps) {
         const dateStr = formatDate(current);
         if (dataMap.has(dateStr)) {
           const value = dataMap.get(dateStr);
@@ -355,7 +355,7 @@
           </div>
           <p style="color:var(--muted); margin:0 0 8px;">
             Ngày tham chiếu: <strong>${formatDate(selectedDate)}</strong> 
-            ${items.length < 31 ? `<span class="badge" style="background:#f87171;color:#fff;">Chưa đủ 31</span>` : `<span class="badge">Đủ 31 giá trị</span>`}
+            ${items.length < 69 ? `<span class="badge" style="background:#f87171;color:#fff;">Chưa đủ 69</span>` : `<span class="badge">Đủ 69 giá trị</span>`}
           </p>
           <div class="numbers-grid">${numsHtml}</div>
         </div>
