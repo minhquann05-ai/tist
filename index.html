@@ -205,11 +205,26 @@
           <label for="dateInput">Chọn ngày tham chiếu</label>
           <input type="date" id="dateInput" />
         </div>
+        <div>
+          <label for="digitSelect">Chọn chữ số đầu (0-9)</label>
+          <select id="digitSelect" style="background:#0f172a;border:1px solid #334155;color:var(--text);padding:12px 16px;border-radius:10px;font-size:1rem;outline:none;">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </div>
         <button id="btnCalc" disabled>Thu thập</button>
       </div>
       <div class="info">
         <strong>Quy tắc:</strong> Từ ngày tham chiếu, duyệt ngược lại theo bước <strong>7 ngày</strong> (cùng thứ trong tuần). 
-        Chỉ giữ lại những bản ghi có <strong>chữ số đầu tiên</strong> của mã 5 chữ số trùng với <strong>chữ số đơn vị</strong> của ngày đã chọn. 
+        Chỉ giữ lại những bản ghi có <strong>chữ số đầu tiên</strong> của mã 5 chữ số trùng với <strong>chữ số đầu đã chọn</strong>. 
         Trích xuất <strong>2 chữ số cuối</strong> của mã đó và thu thập đủ <strong>69 giá trị không trùng</strong>.
       </div>
     </div>
@@ -228,6 +243,7 @@
     let maxDate = null;
 
     const dateInput = document.getElementById('dateInput');
+    const digitSelect = document.getElementById('digitSelect');
     const btnCalc = document.getElementById('btnCalc');
     const resultArea = document.getElementById('resultArea');
 
@@ -279,8 +295,7 @@
       const selected = dateInput.valueAsDate;
       if (!selected) return;
 
-      const dayOfMonth = selected.getDate();
-      const unitsDigit = dayOfMonth % 10;
+      const targetDigit = parseInt(digitSelect.value, 10);
       const weekday = getWeekdayName(selected);
 
       const collected = [];
@@ -297,7 +312,7 @@
           const value = dataMap.get(dateStr);
           const s = pad5(value);
           const firstDigit = parseInt(s[0], 10);
-          if (firstDigit === unitsDigit) {
+          if (firstDigit === targetDigit) {
             const last2 = s.slice(-2);
             if (!seen.has(last2)) {
               seen.add(last2);
@@ -317,12 +332,12 @@
       // Sắp xếp tăng dần theo 2 chữ số cuối
       collected.sort((a, b) => a.last2.localeCompare(b.last2));
 
-      renderResult(collected, unitsDigit, weekday, dayOfMonth, selected);
+      renderResult(collected, targetDigit, weekday, selected);
     });
 
-    function renderResult(items, unitsDigit, weekday, dayOfMonth, selectedDate) {
+    function renderResult(items, targetDigit, weekday, selectedDate) {
       if (items.length === 0) {
-        resultArea.innerHTML = `<div class="card"><div class="error">Không tìm thấy giá trị nào phù hợp với chữ số đơn vị <strong>${unitsDigit}</strong> (${weekday} ngày ${dayOfMonth}).</div></div>`;
+        resultArea.innerHTML = `<div class="card"><div class="error">Không tìm thấy giá trị nào phù hợp với chữ số đầu <strong>${targetDigit}</strong> (${weekday}).</div></div>`;
         return;
       }
 
@@ -345,8 +360,8 @@
               <div class="label">Giá trị đã thu thập</div>
             </div>
             <div class="stat">
-              <div class="value">${unitsDigit}</div>
-              <div class="label">Chữ số đơn vị</div>
+              <div class="value">${targetDigit}</div>
+              <div class="label">Chữ số đầu đã chọn</div>
             </div>
             <div class="stat">
               <div class="value">${weekday}</div>
